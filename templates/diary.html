@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ date }} | {{ session['team'] }} 일기</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+        background-color: #f8f1e4;  
+        font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+        padding: 40px 20px;
+        min-height: 100vh;
+    }
+
+    .diary-wrapper {
+      max-width: 1400px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.05);
+      padding: 40px; 
+    }
+
+    .team-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+
+    .team-header img {
+      height: 50px;
+      margin-right: 12px;
+    }
+
+    .team-header h2 {
+      font-weight: bold;
+      font-size: 1.5rem;
+      color: #333;
+    }
+
+    .weather-box {
+      background-color: #eef1f8;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 25px;
+      font-size: 1rem;
+    }
+
+    textarea {
+        display: block;
+        width: 100%;
+        height: 400px;
+        padding: 16px;
+        font-size: 1.1rem;
+        line-height: 1.7;
+        resize: vertical;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        background-color: #fffdf7;
+        font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+        transition: all 0.2s ease-in-out;
+    }
+
+    select, textarea {
+      border: 1px solid #ccc;
+      transition: border 0.2s ease-in-out;
+    }
+
+    select:focus, textarea:focus {
+      border-color: #6c63ff;
+      box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.1);
+    }
+
+    .submit-btn {
+      background-color: #eef1f8;
+      color: #333;
+      border: none;
+      padding: 12px;
+      width: 100%;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      margin-top: 20px;
+      transition: background-color 0.2s;
+    }
+
+    .submit-btn:hover {
+      background-color: #5a52e8;
+    }
+
+    .form-label {
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="diary-wrapper">
+
+    <!-- 상단: 팀 로고 + 날짜 -->
+    <div class="team-header">
+      <img src="{{ url_for('static', filename='logos/' + logo_filename) }}" alt="로고">
+      <h2>{{ session['team'] }} | {{ date }} 일기</h2>
+    </div>
+
+    <!-- 날씨 정보 -->
+    <div class="weather-box">
+      🌤️ <strong>날씨:</strong> {{ display_weather if display_weather else '날씨 정보 없음' }}
+    </div>
+
+    <!-- 작성/수정 통합 폼 -->
+    <form method="POST">
+      <div class="mb-3">
+        <label class="form-label">오늘의 일기</label>
+        <textarea name="mood" required>{{ diary.mood if diary else '' }}</textarea>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">경기 결과</label>
+        <select class="form-select" name="result" required>
+          <option value="" disabled {% if not diary %}selected{% endif %}>결과 선택</option>
+          <option value="승" {% if diary and diary.result == '승' %}selected{% endif %}>승 😁</option>
+          <option value="패" {% if diary and diary.result == '패' %}selected{% endif %}>패 🤬</option>
+          <option value="무" {% if diary and diary.result == '무' %}selected{% endif %}>무 ➖</option>
+          <option value="우취" {% if diary and diary.result == '우취' %}selected{% endif %}>우취 🌧️</option>
+        </select>
+      </div>
+
+      <button type="submit" class="submit-btn">
+        {{ '수정 완료 💾' if diary else '작성 완료 ✍️' }}
+      </button>
+    </form>
+
+  </div>
+
+</body>
+</html>
